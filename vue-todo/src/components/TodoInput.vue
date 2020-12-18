@@ -5,28 +5,50 @@
     <span class="addContainer" v-on:click="addTodo">
       <i class="fas fa-plus addBtn"></i>
     </span>
+
+    <Modal v-if="showModal" @close="showModal = false">
+      <!--
+        you can use custom content here to overwrite
+        default content
+      -->
+      <h3 slot="header">경고!
+        <i class="fas fa-times closeModalBtn" @click="showModal=false"></i>
+      </h3>
+
+      <p slot="body"> 입력 값이 없습니다. </p>
+
+      <p slot="footer">&copy; SooMin</p>
+
+    </Modal>
   </div>
 </template>
 
 <script>
+import Modal from "./common/Modal.vue";
+
 export default {
   //Arrow Function
-  data: () => {
+  data () {
     return {
-      newTodoItem: ""
+      newTodoItem: "",
+      showModal : false
     }
+  },
+  components: {
+    //ES6
+    Modal
   },
   methods: {
     // 화살표 함수 쓰면 바인딩 잘못 됨
-    addTodo: function() {
+    addTodo () {
       if(this.newTodoItem !== '') {
-        const obj = {completed: false, item: this.newTodoItem};
-      //Object를 저장하기위해 stringify를 사용하는 것도 좋다.
-      localStorage.setItem(this.newTodoItem,JSON.stringify(obj));
+        this.$emit('addTodoItem',this.newTodoItem)
       this.clearInput();
+      } else {
+        this.showModal = !this.showModal
       }
     },
-    clearInput: function () {
+    clearInput () {
       // 단일 책임 원칙
       this.newTodoItem = '';
     }

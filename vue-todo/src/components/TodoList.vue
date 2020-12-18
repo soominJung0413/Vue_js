@@ -1,46 +1,27 @@
 <template>
-  <ul>
-    <li v-bind:key="index" v-for="(todoItem, index) in todoItems" class="shadow">
+<!--   name = 클래스명 tag = HTML 태그 -->
+<transition-group name="list" tag="ul">
+    <li v-bind:key="index" v-for="(todoItem, index) in propsdata" class="shadow">
       <i v-on:click="toggleComplete(todoItem,index)" v-bind:class="{checkBtnCompleted: todoItem.completed}" class="checkBtn fas fa-check"></i>
       <span v-bind:class="{textCompleted: todoItem.completed}">{{todoItem.item}}</span>
       <span class="removeBtn" v-on:click="removeTodo(todoItem,index)">
         <i class="fas fa-trash"></i>
       </span>
     </li>
-  </ul>
+  </transition-group>
 </template>
 
 <script scoped>
 export default {
-  data: () => {
-    return {
-      todoItems: []
-    }
-  },
+  props: ['propsdata'],
   methods: {
-    removeTodo: function (todoItem,index) {
-      //Template String
-      console.log(`${todoItem} / ${index}`);
-      localStorage.removeItem(todoItem);
-      //배열요소 빼기 : (배열을 직접적으로 건드림) , slice(새로운 배열을 리턴 함)
-      this.todoItems.splice(index, 1);
+    removeTodo (todoItem,index) {
+      this.$emit('removeItem', todoItem, index);
     },
-    toggleComplete: function (todoItem,index) {
-      todoItem.completed = !todoItem.completed;
-      localStorage.removeItem(todoItem.item);
-      localStorage.setItem(todoItem.item,JSON.stringify(todoItem));
+    toggleComplete (todoItem,index) {
+      this.$emit('toggleItem',todoItem,index);
     }
   },
-  created: function () {
-    //ES6
-   const map = Object.entries(localStorage);
-   map.forEach((entry,index) => { 
-     if(entry[0] !== 'loglevel:webpack-dev-server'){
-     const item = JSON.parse(entry[1]);
-     this.todoItems.push(item);
-     }
-     return ''});
-  }
 }
 </script>
 
@@ -76,5 +57,17 @@ li {
 .removeBtn {
   margin-left: auto;
   color: #de4343;
+}
+
+/* Transition */
+.list-enter-active, .list-leave-active {
+  /*지속 시간*/
+  transition: all 1s;
+}
+.list-enter, .list-leave-to {
+  /* list-enter + list-leave-to */
+  /* 지우거나 추가할 때 y 축으로 30 픽셀 올리면서 선명해지거나 흐려진다.*/
+  opacity: 0;
+  transform: translateY(30px);
 }
 </style>

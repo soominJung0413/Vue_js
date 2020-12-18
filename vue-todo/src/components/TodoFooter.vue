@@ -9,8 +9,8 @@
 <script>
 export default {
   methods: {
-    clearTodo: function() {
-      localStorage.clear();
+    clearTodo() {
+      this.$emit('clearAll');
     }
   }
 }
