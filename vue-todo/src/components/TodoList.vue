@@ -1,26 +1,35 @@
 <template>
 <!--   name = 클래스명 tag = HTML 태그 -->
 <transition-group name="list" tag="ul">
-    <li v-bind:key="index" v-for="(todoItem, index) in propsdata" class="shadow">
-      <i v-on:click="toggleComplete(todoItem,index)" v-bind:class="{checkBtnCompleted: todoItem.completed}" class="checkBtn fas fa-check"></i>
+    <li v-bind:key="index" v-for="(todoItem, index) in this.storedTodoItems" class="shadow">
+      <i v-on:click="toggleComplete({todoItem,index})" v-bind:class="{checkBtnCompleted: todoItem.completed}" class="checkBtn fas fa-check"></i>
       <span v-bind:class="{textCompleted: todoItem.completed}">{{todoItem.item}}</span>
-      <span class="removeBtn" v-on:click="removeTodo(todoItem,index)">
+      <span class="removeBtn" v-on:click="removeTodo({todoItem,index})">
         <i class="fas fa-trash"></i>
       </span>
     </li>
   </transition-group>
 </template>
 
-<script scoped>
+<script >
+import {mapGetters, mapMutations} from 'vuex'
+
 export default {
-  props: ['propsdata'],
+  computed: {
+    // storedTodoItems(){
+    //   return this.$store.getters.storedTodoItems;
+    // }
+    ...mapGetters({storedTodoItems:"storedTodoItems"}),
+  },
   methods: {
-    removeTodo (todoItem,index) {
-      this.$emit('removeItem', todoItem, index);
-    },
-    toggleComplete (todoItem,index) {
-      this.$emit('toggleItem',todoItem,index);
-    }
+    // removeTodo (todoItem,index) {
+    //   const itemInfo = {todoItem,index}
+    //   this.$store.commit('removeOneItem',itemInfo);
+    // },
+    ...mapMutations({// 인자를 자동으로 넘겨버림
+      removeTodo: 'removeOneItem',
+      toggleComplete: 'toggleOneItem'
+    }),
   },
 }
 </script>

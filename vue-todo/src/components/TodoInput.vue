@@ -39,10 +39,10 @@ export default {
     Modal
   },
   methods: {
-    // 화살표 함수 쓰면 바인딩 잘못 됨
     addTodo () {
       if(this.newTodoItem !== '') {
-        this.$emit('addTodoItem',this.newTodoItem)
+        //commit() 으로 Vuex 에 접근
+        this.$store.commit('addOneItem',this.newTodoItem);
       this.clearInput();
       } else {
         this.showModal = !this.showModal
